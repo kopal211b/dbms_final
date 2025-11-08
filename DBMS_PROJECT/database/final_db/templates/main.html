@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timetable Management Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">Timetable Portal</div>
+      <nav class="nav">
+        <a class="nav-link active" href="/">Home</a>
+        <button id="openAdminLogin" class="nav-link btn-nav" type="button">Admin</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main class="container hero">
+    <section class="hero-head">
+      <h1 class="hero-title">Timetable Management Portal</h1>
+      <p class="hero-subtitle">Access and manage your class schedules efficiently.</p>
+    </section>
+
+    <!-- Role cards -->
+    <section class="role-grid" aria-label="Choose your role">
+      <article class="role-card" tabindex="0" data-target="/student" aria-label="Student Dashboard">
+        <div class="role-icon" aria-hidden="true">🎓</div>
+        <h3>Student</h3>
+        <p class="muted">View section timetable and check teacher availability.</p>
+        <button id="studentBtn" class="btn">Go to Student</button>
+      </article>
+
+      <article class="role-card" tabindex="0" data-target="/teacher" aria-label="Teacher Dashboard">
+        <div class="role-icon" aria-hidden="true">👩‍🏫</div>
+        <h3>Teacher</h3>
+        <p class="muted">View your timetable and check free rooms.</p>
+        <button id="teacherBtn" class="btn">Go to Teacher</button>
+      </article>
+
+      <article class="role-card" tabindex="0" aria-label="Admin Dashboard">
+        <div class="role-icon" aria-hidden="true">🛠️</div>
+        <h3>Admin</h3>
+        <p class="muted">Access restricted admin control panel via login above.</p>
+      </article>
+    </section>
+  </main>
+
+  <!-- Admin Login Modal -->
+  <div id="adminLoginModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="true"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle">
+      <div class="modal-header">
+        <h3 id="adminLoginTitle">Admin Login</h3>
+        <button class="modal-close" data-close="true" aria-label="Close">✕</button>
+      </div>
+      <form id="adminLoginForm" class="modal-body">
+        <div class="form-group">
+          <label for="adminUsername">Username</label>
+          <input id="adminUsername" name="username" type="text" required placeholder="Enter username"/>
+        </div>
+
+        <div class="form-group">
+          <label for="adminPassword">Password</label>
+          <input id="adminPassword" name="password" type="password" required placeholder="Enter password"/>
+        </div>
+
+        <p id="adminLoginError" class="error" style="display:none;">Invalid credentials</p>
+
+        <div class="modal-actions">
+          <button class="btn" type="submit">Login</button>
+          <button type="button" class="btn btn-ghost" data-close="true">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

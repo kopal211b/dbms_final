@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Timetable Management</title>
+
+  <!-- COMMON SHARED CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container">
+    <div class="brand">Teacher Timetable</div>
+    <nav class="nav">
+      <a href="#" class="nav-link active" data-target="page-timetable">View My Timetable</a>
+      <a href="#" class="nav-link" data-target="page-room">Room Availability</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container main">
+
+  <!-- TEACHER TIMETABLE PAGE -->
+  <section id="page-timetable" class="page visible">
+    <div class="grid">
+      <div class="card">
+        <h3>View My Timetable</h3>
+
+        <div class="form-group">
+          <label for="teacherIdInput">Enter Teacher ID</label>
+          <input type="text" id="teacherIdInput" placeholder="Example: T001" 
+                 style="width:100%;padding:10px 12px; border-radius:10px; border:1px solid #ddd;">
+        </div>
+
+        <button id="viewTimetableBtn" class="btn">View Timetable</button>
+      </div>
+
+      <div class="card grow" id="timetableContainer">
+        <p class="muted">Enter Teacher ID and click View Timetable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM AVAILABILITY PAGE -->
+  <section id="page-room" class="page">
+    <div class="grid">
+      <div class="card">
+        <h3>Check Free Rooms</h3>
+
+        <div class="form-group">
+          <label for="roomDay">Day</label>
+          <select id="roomDay">
+            <option value="">--Select Day--</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="roomStartTime">Start Time</label>
+          <input type="time" id="roomStartTime" 
+                 style="width:100%;padding:10px 12px; border-radius:10px; border:1px solid #ddd;">
+        </div>
+
+        <div class="form-group">
+          <label for="roomEndTime">End Time</label>
+          <input type="time" id="roomEndTime" 
+                 style="width:100%;padding:10px 12px; border-radius:10px; border:1px solid #ddd;">
+        </div>
+
+        <button id="checkRoomBtn" class="btn">Search Free Rooms</button>
+      </div>
+
+      <div class="card grow" id="roomAvailabilityContainer">
+        <p class="muted">Select Day & Time Range to check room availability.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/teacher_script.js') }}"></script>
+
+</body>
+</html>

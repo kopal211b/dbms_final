@@ -1,0 +1,154 @@
+
+:root{
+  --bg:#f6f8fb;
+  --text:#111827;
+  --muted:#6b7280;
+  --brand:#0b2e61;
+  --brand-2:#0d4fa6;
+  --card:#ffffff;
+  --border:#e5e7eb;
+}
+
+*{box-sizing:border-box}
+html,body{
+   margin:0 !important;
+  padding:0 !important;
+  height:100%}
+body{
+  margin:0;
+  padding: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:var(--bg);
+}
+
+/* Topbar */
+.topbar{
+  background:#8db1ef;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:50;
+}
+.topbar .container{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding:14px 20px; max-width:1200px; margin:0 auto;
+}
+.brand{font-weight:700; letter-spacing:.2px; color:var(--brand)}
+.nav{display:flex; gap:10px}
+.nav-link{
+  display:inline-block; padding:8px 12px; border-radius:8px;
+  color:var(--text); text-decoration:none; font-weight:600;
+}
+.nav-link:hover{background:#19379a}
+.nav-link.active{color:#ffffff; background:var(--brand)}
+
+/* ============ Layout ============ */
+.container{max-width:1200px; margin:0 auto; padding:0 20px}
+.main{padding:24px 0}
+.page{display:none}
+.page.visible{display:block}
+
+.grid{
+  display:grid;
+  grid-template-columns: 340px 1fr;
+  gap:20px;
+}
+@media (max-width: 960px){
+  .grid{grid-template-columns: 1fr}
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.card.grow{min-height:140px}
+
+h3{margin:0 0 12px 0}
+.form-group{margin:12px 0}
+label{display:block; font-weight:600; margin-bottom:6px}
+select{
+  width:100%; padding:10px 12px; border-radius:10px;
+  border:1px solid var(--border); background:#fff; font:inherit;
+}
+.btn{
+  appearance:none; border:0; background:var(--brand);
+  color:#fff; padding:10px 14px; border-radius:10px; font-weight:600;
+  cursor:pointer;
+}
+.btn:hover{background:var(--brand-2)}
+.muted{color:var(--muted)}
+
+/*  Timetable Table */
+table.timetable{
+  width:100%; border-collapse:separate; border-spacing:0;
+  background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden;
+}
+table.timetable thead th{
+  position:sticky; top:0; z-index:2;
+  background:var(--brand); color:#fff; text-align:center;
+  padding:12px;
+}
+table.timetable th, table.timetable td{
+  border-bottom:1px solid var(--border);
+  padding:10px 12px; text-align:center; font-size:14px;
+}
+table.timetable tbody tr:nth-child(even){background:#fafbff}
+table.timetable tbody tr:hover{background:#eef6ff}
+.day-label{font-weight:700}
+.sub{font-weight:700}
+.tch,.rm{display:inline-block; color:#6b7280; font-size:12px}
+
+/* availability  */
+#teacherAvailabilityContainer ul{margin:0; padding-left:18px}
+#teacherAvailabilityContainer li{margin:6px 0}
+#timetableContainer{
+    overflow-x:auto;          
+  white-space:nowrap; 
+}
+
+/*Admin dashboard */
+.admin-wrap{ max-width:1200px; margin:0 auto; padding:20px; }
+.tabs{ display:flex; gap:8px; border-bottom:1px solid var(--border); margin-bottom:14px; flex-wrap:wrap; }
+.tab{ appearance:none; border:0; background:#f3f6ff; color:var(--text); padding:8px 12px; border-radius:10px 10px 0 0; cursor:pointer; font-weight:600; }
+.tab.active{ background:var(--brand); color:#fff; }
+.tabpanel{ display:none; }
+.tabpanel.active{ display:block; }
+
+.admin-grid{ display:grid; grid-template-columns: 340px 1fr; gap:20px; }
+@media (max-width:960px){ .admin-grid{ grid-template-columns:1fr; } }
+
+.form-card{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; }
+.results-card{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; min-height:140px; }
+
+.list-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.table-like{ border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.table-like .table-head{ display:grid; grid-template-columns: repeat(3, 1fr); gap:0; font-weight:700; background:#f3f6ff; }
+#sectionsTable .table-head{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+#ttPreview .table-head{ grid-template-columns: repeat(6, 1fr); }
+.table-like .row{ display:grid; grid-template-columns: inherit; border-top:1px solid var(--border); }
+.table-like .cell{ padding:10px; text-align:left; }
+
+.btn-small{ padding:6px 10px; border-radius:8px; font-weight:600; border:0; background:var(--brand); color:#fff; }
+.btn-small:hover{ background:var(--brand-2); }
+.btn-ghost{ background:#fff; color:var(--brand); border:1px solid var(--border); }
+.btn-ghost:hover{ background:#f7f9ff; }
+
+/* Inputs look consistent */
+.form-card input, .form-card select{
+  width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:#fff; font:inherit;
+}
+.inline-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.time-input {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  font-size:18px;
+  font-weight:600;
+  color:var(--text);
+}
+.time-input::-webkit-calendar-picker-indicator {
+  cursor:pointer;
+}
