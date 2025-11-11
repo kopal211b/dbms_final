@@ -181,3 +181,170 @@ def get_free_rooms(day, start_time, end_time):
 
     room_list = [{"room_id": r[0], "room_name": r[1]} for r in free_rooms]
     return room_list
+
+def get_common_free_slots(sections, day):
+    conn = get_connection()
+    if not conn:
+        return []
+
+    cur = conn.cursor()
+
+    query = """
+    WITH all_slots AS (
+        SELECT unnest(ARRAY[
+            '08:00-09:00', '09:00-10:00', '10:00-11:00',
+            '11:00-12:00', '12:00-13:00', '13:00-14:00',
+            '14:00-15:00', '15:00-16:00', '16:00-17:00',
+            '17:00-18:00'
+        ]) AS slot
+    ),
+    busy AS (
+        SELECT DISTINCT ts.start_time AS busy_start, ts.end_time AS busy_end, t.section_id
+        FROM Timetable t
+        JOIN Timeslot ts ON t.timeslot_id = ts.timeslot_id
+        WHERE t.day = %s
+          AND t.section_id IN (
+              SELECT section_id FROM Section WHERE section_name = ANY(%s)
+          )
+    ),
+    section_count AS (
+        SELECT COUNT(DISTINCT section_id) AS total_sections FROM busy
+    ),
+    free_slots AS (
+        SELECT
+            split_part(a.slot,'-',1)::time AS start_time,
+            split_part(a.slot,'-',2)::time AS end_time
+        FROM all_slots a
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM busy b
+            WHERE NOT (
+                (split_part(a.slot,'-',2)::time) <= b.busy_start
+                OR (split_part(a.slot,'-',1)::time) >= b.busy_end
+            )
+        )
+    )
+    SELECT start_time, end_time
+    FROM free_slots
+    ORDER BY start_time;
+    """
+
+    cur.execute(query, (day, sections))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rows
+
+def get_teacher_status(teacher_name, day, time_to_check):
+    conn = get_connection()
+    if not conn:
+        return []
+
+    cur = conn.cursor()
+
+    query = """
+    WITH teacher_status AS (
+        SELECT 
+            te.teacher_name,
+            s.section_name,
+            t.room_id,
+            ts.start_time,
+            ts.end_time,
+            t.day
+        FROM teacher te
+        LEFT JOIN timetable t ON te.teacher_id = t.teacher_id
+        LEFT JOIN section s ON t.section_id = s.section_id
+        LEFT JOIN timeslot ts ON t.timeslot_id = ts.timeslot_id
+        WHERE te.teacher_name = %s
+          AND t.day = %s
+    )
+    SELECT 
+        CASE 
+            WHEN EXISTS (
+                SELECT 1 FROM teacher_status 
+                WHERE %s BETWEEN start_time AND end_time
+            )
+            THEN (
+                SELECT CONCAT('Teaching Section ', section_name, ' in Room ', room_id)
+                FROM teacher_status 
+                WHERE %s BETWEEN start_time AND end_time
+                LIMIT 1
+            )
+            ELSE CONCAT('In office/cabin assigned to ', %s)
+        END AS status;
+    """
+
+    cur.execute(query, (teacher_name, day, time_to_check, time_to_check, teacher_name))
+    result = cur.fetchone()[0]
+    cur.close()
+    conn.close()
+    return result
+
+def get_common_free_slots_for_teachers(teachers, day):
+    conn = get_connection()
+    if not conn:
+        return []
+
+    cur = conn.cursor()
+
+    query = """
+    WITH all_slots AS (
+        SELECT unnest(ARRAY[
+            '08:00-09:00', '09:00-10:00', '10:00-11:00',
+            '11:00-12:00', '12:00-13:00', '13:00-14:00',
+            '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00'
+        ]) AS slot
+    ),
+    selected_teachers AS (
+        SELECT teacher_id, teacher_name
+        FROM teacher
+        WHERE teacher_name = ANY(%s)
+    ),
+    busy AS (
+        SELECT DISTINCT ts.start_time, ts.end_time, t.teacher_id
+        FROM timetable t
+        JOIN timeslot ts ON t.timeslot_id = ts.timeslot_id
+        WHERE t.day = %s
+          AND t.teacher_id IN (SELECT teacher_id FROM selected_teachers)
+    ),
+    total_teachers AS (
+        SELECT COUNT(DISTINCT teacher_id) AS cnt FROM selected_teachers
+    )
+    SELECT 
+        split_part(a.slot,'-',1)::time AS start_time,
+        split_part(a.slot,'-',2)::time AS end_time
+    FROM all_slots a, total_teachers tt
+    WHERE (
+        SELECT COUNT(DISTINCT teacher_id)
+        FROM busy b
+        WHERE NOT (
+            (split_part(a.slot,'-',2)::time <= b.start_time)
+            OR (split_part(a.slot,'-',1)::time >= b.end_time)
+        )
+    ) = 0
+    ORDER BY start_time;
+    """
+
+    cur.execute(query, (teachers, day))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rows
+
+#REMOVE THIS WHEN CONNECTED TO FRONTEND - : ADD GET_COMMMON_FREE_SLOTS QUERY BOTH IN STDUENT PAGE AND TEACHER PAGE
+#FOR STUDENT PAGE-> TO CHECK HIS FRIENDS ARE FREE SO THAT THEY CAN DO GROUP STUDY
+#FOR TEACHER PAGE-> TO CHECK IF A CLASS CAN BE CONDUCTED FOR MULTIPLE SECTION IF THEY ARE FREE AT THE SAME TIME
+'''if __name__ == '__main__':
+    slots = get_common_free_slots(['A','B','C'], 'Thursday')  #input is mutiple sections ticked and day choosen to check when are multiple section free together 
+    print(slots)
+    
+    print(get_teacher_status('Dr. Priya Nair', 'Monday', '8:00:00')) #button in stduent page to check with th teacher name,day and time to see where the etacher is present
+    
+    free_slots = get_common_free_slots_for_teachers(
+    ['Dr. Priya Nair', 'Prof. Manoj Verma'],
+    'Monday'
+        )
+    for start, end in free_slots:
+         print(f"{start} - {end}")  #add this button in teacher page so that mutiple teacher can do a meeting 
+
+         '''
