@@ -31,7 +31,7 @@
 
         <div class="form-group">
           <label for="teacherIdInput">Enter Teacher ID</label>
-          <input type="text" id="teacherIdInput" placeholder="Example: T001" 
+          <input type="text" id="teacherIdInput" placeholder="Example: 001" 
                  style="width:100%;padding:10px 12px; border-radius:10px; border:1px solid #ddd;">
         </div>
 
@@ -82,7 +82,60 @@
       </div>
     </div>
   </section>
+
+  <button id="requestClassBtn">Request Temporary Class</button>
+
+<div id="tempClassForm" style="display:none; margin-top: 10px;">
+  <label>Subject ID:</label>
+  <input type="number" id="subject_id">
+
+  <label>Sections:</label>
+  <select id="sections" multiple>
+    <option value="1">Section A</option>
+    <option value="2">Section B</option>
+  </select>
+
+  <label>Day:</label>
+  <select id="day">
+    <option>Monday</option><option>Tuesday</option>
+    <option>Wednesday</option><option>Thursday</option>
+    <option>Friday</option>
+  </select>
+
+  <label>Start Time:</label>
+  <input type="time" id="start_time">
+
+  <label>End Time:</label>
+  <input type="time" id="end_time">
+
+  <button id="submitRequest">Submit Request</button>
+</div>
+
+<script>
+document.getElementById('requestClassBtn').onclick = () => {
+  document.getElementById('tempClassForm').style.display = 'block';
+};
+
+document.getElementById('submitRequest').onclick = async () => {
+  const subject_id = document.getElementById('subject_id').value;
+  const sections = Array.from(document.getElementById('sections').selectedOptions).map(o => parseInt(o.value));
+  const day = document.getElementById('day').value;
+  const start = document.getElementById('start_time').value;
+  const end = document.getElementById('end_time').value;
+
+  const res = await fetch('/request_temp_class', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ subject_id, sections, day, start_time: start, end_time: end })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+};
+</script>
+
 </main>
+
 
 <script src="{{ url_for('static', filename='js/teacher_script.js') }}"></script>
 
