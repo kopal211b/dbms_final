@@ -111,6 +111,21 @@
         </div>
       </div>
     </section>
+
+    <div id="notifications"></div>
+
+<script>
+async function loadNotifications(section_id) {
+  const res = await fetch(`/get_notifications/${section_id}`);
+  const data = await res.json();
+  const container = document.getElementById('notifications');
+  container.innerHTML = data.map(n => `<p>${n.message} (${n.created_at})</p>`).join('');
+}
+
+// Example: student belongs to section 2
+loadNotifications(2);
+</script>
+
   </main>
 
   <!-- Scripts -->
