@@ -4,13 +4,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — Timetable Management</title>
-
-  <!-- Use the common stylesheet you requested -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Topbar -->
   <header class="topbar">
     <div class="container">
       <div class="brand">Admin Panel</div>
@@ -35,41 +32,29 @@
     <!-- TEACHERS -->
     <section id="tab-teachers" class="tabpanel active" role="tabpanel" aria-label="Manage Teachers">
       <div class="admin-grid">
-        <!-- Left: Form -->
         <div class="form-card">
-          <h3>Add / Edit / Delete Teacher</h3>
+          <h3>Add / Delete Teacher</h3>
+          <form id="addTeacherForm">
+            <input type="number" id="teacher_id" placeholder="Teacher ID" required>
+            <input type="text" id="teacher_name" placeholder="Teacher Name" required>
+            <input type="number" id="dept_id" placeholder="Department ID" required>
+            <input type="text" id="subject_ids" placeholder="Subject IDs (comma-separated)" required>
+            <button type="submit" class="btn">Add Teacher</button>
+          </form>
 
-          <div class="form-group">
-            <label for="teacher_id">Teacher ID (for Edit/Delete)</label>
-            <input id="teacher_id" type="text">
-          </div>
-
-          <div class="form-group">
-            <label for="teacher_name">Teacher Name</label>
-            <input id="teacher_name" type="text">>
-          </div>
-
-          <div class="form-group">
-            <label for="dept_name">Department</label>
-            <input id="dept_name" type="text"">
-          </div>
-
-          <div class="inline-actions">
-            <button id="addTeacherBtn" class="btn">Add</button>
-            <button id="editTeacherBtn" class="btn btn-ghost">Edit</button>
-            <button id="deleteTeacherBtn" class="btn btn-ghost">Delete</button>
+          <div class="form-group mt-3">
+            <h4>Delete Teacher</h4>
+            <input type="number" id="delete_teacher_id" placeholder="Enter Teacher ID to Delete" required>
+            <button id="deleteTeacherBtn" class="btn btn-ghost">Delete Teacher</button>
           </div>
         </div>
 
-        <!-- Right: List preview -->
         <div class="results-card">
           <div class="list-header">
             <h3>Teachers</h3>
             <button id="refreshTeachersBtn" class="btn-small">Refresh</button>
           </div>
-          <div id="teachersTable" class="table-like muted">
-            <!-- Filled by JS -->
-          </div>
+          <div id="teachersTable" class="table-like muted"></div>
         </div>
       </div>
     </section>
@@ -79,22 +64,18 @@
       <div class="admin-grid">
         <div class="form-card">
           <h3>Add / Edit / Delete Section</h3>
-
           <div class="form-group">
-            <label for="section_id">Section ID (for Edit/Delete)</label>
-            <input id="section_id" type="text" placeholder="e.g. S05">
+            <label for="section_id">Section ID</label>
+            <input id="section_id" type="text" placeholder="S05">
           </div>
-
           <div class="form-group">
             <label for="section_name">Section Name</label>
             <input id="section_name" type="text" placeholder="A / B / C">
           </div>
-
           <div class="form-group">
             <label for="sem_id">Semester</label>
             <input id="sem_id" type="number" min="1" max="8" placeholder="5">
           </div>
-
           <div class="form-group">
             <label for="strength">Strength</label>
             <input id="strength" type="number" min="1" placeholder="60">
@@ -112,62 +93,48 @@
             <h3>Sections</h3>
             <button id="refreshSectionsBtn" class="btn-small">Refresh</button>
           </div>
-          <div id="sectionsTable" class="table-like muted">
-            <!-- Filled by JS -->
-          </div>
+          <div id="sectionsTable" class="table-like muted"></div>
         </div>
       </div>
     </section>
 
-    <!-- TIMETABLE (Manual) -->
+    <!-- TIMETABLE -->
     <section id="tab-timetable" class="tabpanel" role="tabpanel" aria-label="Manage Timetable">
       <div class="admin-grid">
         <div class="form-card">
-          <h3>Create Timetable Entry (Manual)</h3>
-
+          <h3>Create Timetable Entry</h3>
           <div class="form-group">
             <label for="tt_day">Day</label>
             <select id="tt_day">
               <option value="">--Select--</option>
-              <option>Monday</option>
-              <option>Tuesday</option>
-              <option>Wednesday</option>
-              <option>Thursday</option>
-              <option>Friday</option>
+              <option>Monday</option><option>Tuesday</option>
+              <option>Wednesday</option><option>Thursday</option><option>Friday</option>
             </select>
           </div>
-
           <div class="form-group">
-  <label for="start_time">Start Time</label>
-  <input id="start_time" type="time" class="time-input" required>
-</div>
-
-<div class="form-group">
-  <label for="end_time">End Time</label>
-  <input id="end_time" type="time" class="time-input" required>
-</div>
-
-
+            <label for="start_time">Start Time</label>
+            <input id="start_time" type="time" required>
+          </div>
+          <div class="form-group">
+            <label for="end_time">End Time</label>
+            <input id="end_time" type="time" required>
+          </div>
           <div class="form-group">
             <label for="tt_subject">Subject</label>
-            <input id="tt_subject" type="text" placeholder="DBMS / OS / CN ...">
+            <input id="tt_subject" type="text" placeholder="DBMS / OS">
           </div>
-
           <div class="form-group">
             <label for="tt_teacher_id">Teacher ID</label>
-            <input id="tt_teacher_id" type="text" placeholder="1">
+            <input id="tt_teacher_id" type="text">
           </div>
-
           <div class="form-group">
             <label for="tt_section_id">Section ID</label>
-            <input id="tt_section_id" type="text" >
+            <input id="tt_section_id" type="text">
           </div>
-
           <div class="form-group">
             <label for="tt_room">Room / Lab</label>
             <input id="tt_room" type="text" placeholder="A1 / Lab L2">
           </div>
-
           <div class="inline-actions">
             <button id="addTTBtn" class="btn">Add Entry</button>
             <button id="clearTTBtn" class="btn btn-ghost">Clear</button>
@@ -176,12 +143,10 @@
 
         <div class="results-card">
           <div class="list-header">
-            <h3>Timetable Entries (Preview)</h3>
+            <h3>Timetable Entries</h3>
             <button id="clearPreviewBtn" class="btn-small">Clear Preview</button>
           </div>
-          <div id="ttPreview" class="table-like muted">
-            <!-- Filled by JS code -->
-          </div>
+          <div id="ttPreview" class="table-like muted"></div>
         </div>
       </div>
     </section>
@@ -194,19 +159,14 @@
             <h3>Teachers Free Today</h3>
             <button id="refreshFreeTeachersBtn" class="btn-small">Refresh</button>
           </div>
-          <ul id="freeTeachers" class="muted">
-            <li>Loading…</li>
-          </ul>
+          <ul id="freeTeachers" class="muted"><li>Loading…</li></ul>
         </div>
-
         <div class="results-card">
           <div class="list-header">
             <h3>Rooms Free Now</h3>
             <button id="refreshFreeRoomsBtn" class="btn-small">Refresh</button>
           </div>
-          <ul id="freeRooms" class="muted">
-            <li>Loading…</li>
-          </ul>
+          <ul id="freeRooms" class="muted"><li>Loading…</li></ul>
         </div>
       </div>
     </section>
