@@ -116,4 +116,3 @@ document.getElementById('checkAvailabilityBtn').addEventListener('click', async 
     container.innerHTML = '<p style="color:#b91c1c;">Error fetching teacher availability.</p>';
   }
 });
-
