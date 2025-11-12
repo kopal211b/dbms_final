@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Timetable Management</title>
+
+  <!-- COMMON SHARED CSS -->
+   <!-- Choices.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<!-- Choices.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container">
+    <div class="brand">Teacher Timetable</div>
+    <nav class="nav">
+      <a href="#" class="nav-link active" data-target="page-timetable">View My Timetable</a>
+      <a href="#" class="nav-link" data-target="page-room">Room Availability</a>
+      <a href="#" class="nav-link" data-target="page-temp">Request Temporary Class</a>
+      <a href="#" class="nav-link" data-target="page-common">Common Free Slots</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container main">
+
+  <!-- TEACHER TIMETABLE PAGE -->
+  <section id="page-timetable" class="page visible">
+    <div class="grid">
+      <div class="card">
+        <h3>View My Timetable</h3>
+        <div class="form-group">
+          <label for="teacherIdInput">Enter Teacher ID</label>
+          <input type="text" id="teacherIdInput" placeholder="Example: 001" 
+                 style="width:100%;padding:10px 12px; border-radius:10px; border:1px solid #ddd;">
+        </div>
+        <button id="viewTimetableBtn" class="btn">View Timetable</button>
+      </div>
+
+      <div class="card grow" id="timetableContainer">
+        <p class="muted">Enter Teacher ID and click View Timetable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOM AVAILABILITY PAGE -->
+  <section id="page-room" class="page">
+    <div class="grid">
+      <div class="card">
+        <h3>Check Free Rooms</h3>
+
+        <div class="form-group">
+          <label for="roomDay">Day</label>
+          <select id="roomDay">
+            <option value="">--Select Day--</option>
+            <option>Monday</option><option>Tuesday</option>
+            <option>Wednesday</option><option>Thursday</option><option>Friday</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="roomStartTime">Start Time</label>
+          <input type="time" id="roomStartTime" class="time-input">
+        </div>
+
+        <div class="form-group">
+          <label for="roomEndTime">End Time</label>
+          <input type="time" id="roomEndTime" class="time-input">
+        </div>
+
+        <button id="checkRoomBtn" class="btn">Search Free Rooms</button>
+      </div>
+
+      <div class="card grow" id="roomAvailabilityContainer">
+        <p class="muted">Select Day & Time Range to check room availability.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPORARY CLASS REQUEST PAGE -->
+  <section id="page-temp" class="page">
+    <div class="grid">
+      <div class="card">
+        <h3>Request Temporary Class</h3>
+
+        <div class="form-group">
+          <label for="subjectId">Subject ID</label>
+          <input type="number" id="subjectId" placeholder="e.g., 101" required>
+        </div>
+
+        <div class="form-group">
+          <label for="sectionsList">Sections (comma separated)</label>
+          <input type="text" id="sectionsList" placeholder="e.g., A,B">
+        </div>
+
+        <div class="form-group">
+          <label for="tempDay">Day</label>
+          <select id="tempDay">
+            <option>Monday</option><option>Tuesday</option>
+            <option>Wednesday</option><option>Thursday</option><option>Friday</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="startTime">Start Time</label>
+          <input type="time" id="startTime" required>
+        </div>
+
+        <div class="form-group">
+          <label for="endTime">End Time</label>
+          <input type="time" id="endTime" required>
+        </div>
+
+        <button id="requestTempBtn" class="btn">Request Class</button>
+      </div>
+
+      <div class="card grow" id="tempClassResult">
+        <p class="muted">Fill in details to request a temporary class.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMON FREE SLOTS PAGE -->
+  <section id="page-common" class="page">
+    <div class="grid">
+      <div class="card">
+        <h3>Find Common Free Slots (Teachers)</h3>
+
+        <div class="form-group">
+          <label for="dayTeachers">Day</label>
+          <select id="dayTeachers">
+            <option>Monday</option><option>Tuesday</option>
+            <option>Wednesday</option><option>Thursday</option><option>Friday</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="teachersSelect">Select Teachers (multi-select)</label>
+  <select  id="teachersSelect" multiple>
+          <option value="">--Select Teacher--</option>
+              <option value="Dr. Priya Nair">Dr. Priya Nair</option>
+              <option value="Prof. Manoj Verma">Prof. Manoj Verma</option>
+              <option value="Dr. Suman Agarwal">Dr. Suman Agarwal</option>
+              <option value="Dr. Rakesh Sharma">Dr. Rakesh Sharma</option>
+              <option value="Prof. Anjali Mehta">Prof. Anjali Mehta</option>
+              <option value="Dr. Neha Gupta">Dr. Neha Gupta</option>
+              <option value="Prof. Amit Singh">Prof. Amit Singh</option>
+              <option value="Dr. Kavita Joshi">Dr. Kavita Joshi</option>
+              <option value="Prof. Rajesh Kumar">Prof. Rajesh Kumar</option>
+              <option value="Dr. Sneha Iyer">Dr. Sneha Iyer</option>
+              <option value="Prof. Vikram Rao">Prof. Vikram Rao</option>
+              <option value="Dr. Alok Choudhary">Dr. Alok Choudhary</option>
+              <option value="Prof. Shweta Pandey">Prof. Shweta Pandey</option>
+              <option value="Dr. Arjun Desai">Dr. Arjun Desai</option>
+              <option value="Prof. Pooja Thakur">Prof. Pooja Thakur</option>
+            </select>
+        </div>
+
+        <button id="findCommonBtn" class="btn">Find Common Free Slots</button>
+      </div>
+
+      <div class="card grow" id="teachersFreeResult">
+        <p class="muted">Enter teachers to find shared free slots.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/teacher_script.js') }}"></script>
+
+</body>
+</html>
