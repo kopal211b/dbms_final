@@ -14,6 +14,28 @@ navLinks.forEach(link => {
   });
 });
 
+// Initialize Choices.js for multi-select teachers
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.getElementById('teachersSelect')) {
+    window.teacherChoices = new Choices('#teachersSelect', {
+      removeItemButton: true,
+      searchEnabled: true,
+      placeholderValue: 'Select teachers...',
+      noResultsText: 'No teacher found',
+      noChoicesText: 'No teachers available'
+    });
+  }
+});
+
+// Helper function to get selected teachers from Choices.js
+function getSelectedTeachers() {
+  if (window.teacherChoices) {
+    return window.teacherChoices.getValue(true); // returns array of selected values
+  }
+  return [];
+}
+
+
 //TEACHER TIMETABLE
 document.getElementById('viewTimetableBtn').addEventListener('click', async () => {
     const teacherId = document.getElementById('teacherIdInput').value;
@@ -112,4 +134,73 @@ document.getElementById('checkRoomBtn').addEventListener('click', async () => {
         console.error(err);
         container.innerHTML = '<p style="color:#b91c1c;">Error fetching room availability.</p>';
     }
+});
+
+
+//  Request Temporary Class
+document.getElementById('requestTempBtn').addEventListener('click', async () => {
+  const teacher_id = document.getElementById('teacherIdInput').value.trim() || 1;
+  const subject_id = subjectId.value.trim();
+  const sections = sectionsList.value.split(',').map(s => s.trim());
+  const day = tempDay.value;
+  const start = startTime.value;
+  const end = endTime.value;
+  const resultBox = tempClassResult;
+
+  if (!subject_id || !sections.length || !day || !start || !end) {
+    resultBox.innerHTML = '<p class="error">Please fill in all fields.</p>';
+    return;
+  }
+
+  const payload = { teacher_id, subject_id, sections, day, start_time: start, end_time: end };
+
+  try {
+    const res = await fetch('/request_temp_class', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    resultBox.innerHTML = `<p class="${data.success ? 'success' : 'error'}">${data.message}</p>`;
+  } catch (err) {
+    console.error(err);
+    resultBox.innerHTML = '<p class="error">Error requesting temporary class.</p>';
+  }
+});
+
+//  Common Free Slots (Teachers)
+document.getElementById('findCommonBtn').addEventListener('click', async () => {
+  const day = dayTeachers.value;
+  const teachers = getSelectedTeachers();
+  const container = teachersFreeResult;
+
+  if (!day || !teachers.length) {
+    container.innerHTML = '<p class="error">Please select at least one teacher and a day.</p>';
+    return;
+  }
+
+  const params = new URLSearchParams();
+  params.append('day', day);
+  teachers.forEach(t => params.append('teachers', t));
+
+  try {
+    const res = await fetch('/teachers_free', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+    const data = await res.json();
+
+    if (!data.free_slots?.length) {
+      container.innerHTML = `<p>No common free slots for ${teachers.join(', ')} on ${day}</p>`;
+      return;
+    }
+
+    container.innerHTML = `<h4>Common Free Slots — ${day}</h4><ul>${
+      data.free_slots.map(s => `<li>${s.start} - ${s.end}</li>`).join('')
+    }</ul>`;
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = '<p class="error">Error fetching common slots.</p>';
+  }
 });
