@@ -80,6 +80,21 @@ document.getElementById('viewTimetableBtn').addEventListener('click', async () =
   }
 });
 
+// Initialize Choices.js for multi-select teachers
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.getElementById('sectionschoose')) {
+    window.teacherChoices = new Choices('#sectionschoose', {
+      removeItemButton: true,
+      searchEnabled: true,
+      placeholderValue: 'Select Section',
+      noResultsText: 'No Section found',
+      noChoicesText: 'No Sections available'
+    });
+  }
+});
+
+
+
 // TEACHER FREE SLOTS
 document.getElementById('checkAvailabilityBtn').addEventListener('click', async () => {
   const teacher = document.getElementById('teacherSelect').value;
@@ -116,3 +131,64 @@ document.getElementById('checkAvailabilityBtn').addEventListener('click', async 
     container.innerHTML = '<p style="color:#b91c1c;">Error fetching teacher availability.</p>';
   }
 });
+
+
+// Common Free Slots
+document.getElementById('findCommonSlotsBtn').addEventListener('click', async () => {
+  const day = document.getElementById('commonDay').value;
+  const sections = [...document.getElementById('sectionschoose').selectedOptions].map(o => o.value);
+  const container = document.getElementById('sectionsFreeResult');
+  if (!day || !sections.length) {
+    container.innerHTML = '<p class="error">Select a day and at least one section.</p>';
+    return;
+  }
+
+  const params = new URLSearchParams();
+  params.append('day', day);
+  sections.forEach(s => params.append('sections', s));
+  const res = await fetch('/sections_free', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params
+  });
+  const data = await res.json();
+  if (!data.free_slots?.length) {
+    container.innerHTML = `<p>No common free slots on ${day} for sections ${sections.join(', ')}</p>`;
+    return;
+  }
+  container.innerHTML = `<h4>Common Free Slots</h4>
+  <ul>${data.free_slots.map(s => `<li>${s.start} - ${s.end}</li>`).join('')}</ul>`;
+});
+
+//  Teacher Status
+document.getElementById('checkStatusBtn').addEventListener('click', async () => {
+  const teacher = statusTeacher.value, day = statusDay.value, time = statusTime.value;
+  const result = document.getElementById('teacherStatusResult');
+  if (!teacher || !day || !time) {
+    result.innerHTML = '<p class="error">Please fill all fields.</p>';
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append('teacher_name', teacher);
+  fd.append('day', day);
+  fd.append('time', time);
+  const res = await fetch('/teacher_status', { method: 'POST', body: fd });
+  const data = await res.json();
+  result.innerHTML = `<p class="info">${data.status}</p>`;
+});
+
+//  Notifications
+document.getElementById('loadNotifications').addEventListener('click', async () => {
+  const sectionId = document.getElementById('sectionNotifySelect').value;
+  const container = document.getElementById('notificationList');
+  const res = await fetch(`/get_notifications/${sectionId}`);
+  const data = await res.json();
+  if (!data.length) {
+    container.innerHTML = `<p>No notifications for this section.</p>`;
+    return;
+  }
+  container.innerHTML = `<ul>${data.map(n => `<li>${n.message} <small>(${n.created_at})</small></li>`).join('')}</ul>`;
+});
+
+
